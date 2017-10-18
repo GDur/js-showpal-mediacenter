@@ -1,0 +1,19 @@
+ReactPlayer {
+    position: fixed;
+}
+.react-player{
+    background: #000;
+}
+
+video{
+    background: black;
+}
+
+ReactPlayer.small {
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    margin: 20px;
+    padding: 2px;
+    box-shadow: 1px 1px 12px 4px rgba(0, 0, 0, 0.37);
+}
