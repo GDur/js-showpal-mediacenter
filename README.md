@@ -8,17 +8,17 @@ This is a minimalistic mediacenter build with ReactJS.
 - Git
 
 ## Setup
-- download and install dependencies
-```cmd
+- download and install dependencies:
+```bash
 git clone git@github.com:GDur/js-showpal-mediacenter.git
 cd js-showpal-mediacenter
 npm install
 ```
-- rename *./src/config.json.dist* to *./src/config.json*
-- open *./src/config.json* with a text editor and adjust the *tvShowPath* variable
-- start server: *start-server.bat*
-- start mediacenter *start.bat*
-- load url *localhost:3000*
+- rename **./src/config.json.dist** to **./src/config.json**
+- open **./src/config.json** with a text editor and adjust the **tvShowPath** variable
+- start server: **start-server.bat**
+- start mediacenter **start.bat**
+- load url **localhost:3000**
 
 
 ## todo
