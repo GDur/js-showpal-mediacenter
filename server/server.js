@@ -71,6 +71,27 @@ fs.watch(basePath, {
     }
 });
 
+app.get('/subtitle.vtt', function (req, res, next) {
+
+    let options = {
+        root: basePath + '/Z Nation/',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    };
+
+    // let fileName = req.params.name;
+    // console.log(name)
+    res.sendFile('Z.Nation.S04E03.HDTV.x264-SVA.HI.vtt', options, function (err) {
+        if (err) {
+            next(err);
+        } else {
+            console.log('Sent:', 'Z.Nation.S04E03.HDTV.x264-SVA.HI.vtt');
+        }
+    });
+
+});
 app.get('/getFileArrayFromTvShowFolder', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     if (lastUpdatedDate === 0 || folderHasChanged) {
@@ -125,28 +146,29 @@ function msToTime(duration) {
 
 app.get('/conversionRequest', function (req, res) {
 
-    let reqResource = req.query.tvShow;
+    let reqResource = req.query.videoPath;
     let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
-    // const spawnCommand = 'ffmpeg -i \'' + videoPath + '\' -c:a libvorbis -c:v copy test_s03E09.mkv'
 
-    //ffmpeg -i '' -c:a libvorbis -c:v copy test_s03E09.mkv
     try {
-        const ffmpeg = spawn(FFMPEG_BIN_PATH, [
-            '-accurate_seek',
+
+
+        let options = [
             '-i', videoPath,
-            '-acodec', 'libvorbis',
-            '-vcodec', 'h264', // or copy
-            '-f', 'mkv',
-            videoPath + '.mkv']);
+            '-c:a', 'libvorbis',
+            '-c:v', 'copy',
+            videoPath + '.converted.mkv']
+
+        console.log(options.join(', '))
+        const ffmpeg = spawn(FFMPEG_BIN_PATH, options);
 
 
         ffmpeg.stderr.on('data', function (data) {
-            console.log(data.toString());
+            console.log("data", data.toString());
             // ffmpeg.stdin.write('q')
         });
 
         ffmpeg.stderr.on('end', function () {
-            console.log('file has been converted succesfully');
+            console.log('end', 'file has been converted succesfully');
             // ffmpeg.stdin.write('q')
         });
 
@@ -162,6 +184,9 @@ app.get('/conversionRequest', function (req, res) {
     } catch (err) {
         console.log(err)
     }
+    res.json({
+        basePath: "test"
+    })
 })
 app.get('/streamRequest', function (req, res) {
     let reqResource = req.query.tvShow;

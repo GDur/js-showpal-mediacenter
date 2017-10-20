@@ -166,6 +166,10 @@ export default class ShowOverviewView extends React.Component {
                         this.player = player
                     }}
                 />
+                {/*<video controls src="streamRequest?tvShow=D:/Downloads/JD/TV Shows/The Expanse/The Expanse - S02E05.mkv&seek=0.5">*/}
+                    {/*<track kind="subtitles" label="English subtitles" src="subtitle/" srclang="en" default></track>*/}
+                {/*</video>*/}
+
                 <Grid className="series-list" fluid>
                     <Row>
                         {l}

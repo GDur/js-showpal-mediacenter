@@ -1,6 +1,6 @@
 {
   "name": "js-showpal-media-server",
-  "version": "0.9.28",
+  "version": "1.0.0",
   "private": true,
   "proxy": "http://localhost:3001/",
   "devDependencies": {

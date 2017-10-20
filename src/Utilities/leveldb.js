@@ -16,7 +16,7 @@ export default class {
         let path = this.basePath + `/put?key=` + key + '&value=' + JSON.stringify(value)
         //console.log(path)
         return fetch(path, {
-            accept: 'application/json',
+            accept: 'application/   json',
             method: "POST"
         }).then(checkStatus).then(parseJSON).then((data) => {
             if (cb)

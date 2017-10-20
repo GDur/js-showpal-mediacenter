@@ -45,11 +45,14 @@ export default class PlayerView extends Component {
     onMouseMove = () => {
         this.setState({mouseMovedNotSince: 0})
     }
-
+    // componentDidMount = () => {
+    //     let self = this
+    //     if (this.player)
+    //         console.log(self.player.player.player)
+    // }
     componentWillMount = () => {
         // mouseMovedNotSince
         let self = this
-
         Mousetrap.bind('space', function (e) {
 
             if (e.preventDefault) {
@@ -118,7 +121,7 @@ export default class PlayerView extends Component {
             self.showUIForShortTime()
         });
         db.get('volume', (err, volume) => {
-            if(!err && volume)
+            if (!err && volume)
                 self.setVolume(null, parseFloat(volume))
         })
         setInterval(() => {
@@ -155,7 +158,7 @@ export default class PlayerView extends Component {
     }
 
     getActiveEpisodeOfSeries = (series, cb) => {
-        if(!series || !series.name)
+        if (!series || !series.name)
             return
 
         let key = 'activeEpisode-' + series.name
@@ -213,7 +216,6 @@ export default class PlayerView extends Component {
             })
             let p = `streamRequest?tvShow=` + episode.fullFilePath + '&seek=' + this.state.firstSlider
             self.load(p, cb)
-
         })
     }
 
@@ -326,6 +328,7 @@ export default class PlayerView extends Component {
 
     }
     muteUnmutePlayer = e => {
+
         this.player.player.player.muted = !this.player.player.player.muted
         if (this.player.player.player.muted !== undefined)
             this.setState({muted: this.player.player.player.muted})
@@ -408,7 +411,8 @@ export default class PlayerView extends Component {
                         ref={player => {
                             this.player = player
                         }}
-
+                         // controls
+                        crossorigin="anonymous"
                         width='100%'
                         height='100%'
                         url={url}
@@ -420,6 +424,14 @@ export default class PlayerView extends Component {
                         youtubeConfig={youtubeConfig}
                         fileConfig={fileConfig}
                         onReady={() => {
+                            // console.log(this.player.player)
+                            // console.log(this.player.player.player)
+                            // let trackNode = document.createElement("track");
+                            // trackNode.setAttribute('label', 'englisch')
+                            // trackNode.setAttribute('kind', 'subtitles')
+                            // trackNode.setAttribute('srclang', 'en')
+                            // trackNode.setAttribute('src', 'http://localhost:3001/subtitles.vtt')
+                            // this.player.player.player.appendChild(trackNode);
                         }}
                         onStart={() => this.onStart()}
                         onPlay={() => this.setState({playing: true})}

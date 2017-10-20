@@ -9,7 +9,7 @@ module.exports = function (app) {
 
     //1) Create our database, supply location and options.
     //   This will create or open the underlying LevelDB store.
-    var db = new level('./showpal-db')
+    let db = new level('./showpal-db')
 
     self.put = (cb)=> {
         app.post('/leveldb/put', function (req, res) {
