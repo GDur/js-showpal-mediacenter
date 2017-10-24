@@ -71,27 +71,6 @@ fs.watch(basePath, {
     }
 });
 
-app.get('/subtitle.vtt', function (req, res, next) {
-
-    let options = {
-        root: basePath + '/Z Nation/',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
-    };
-
-    // let fileName = req.params.name;
-    // console.log(name)
-    res.sendFile('Z.Nation.S04E03.HDTV.x264-SVA.HI.vtt', options, function (err) {
-        if (err) {
-            next(err);
-        } else {
-            console.log('Sent:', 'Z.Nation.S04E03.HDTV.x264-SVA.HI.vtt');
-        }
-    });
-
-});
 app.get('/getFileArrayFromTvShowFolder', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     if (lastUpdatedDate === 0 || folderHasChanged) {
