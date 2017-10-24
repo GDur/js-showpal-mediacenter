@@ -1,11 +1,8 @@
 # js-showpal-mediacenter
 
-## description
-This is a minimalistic mediacenter build with ReactJS.
-
 ## Requirements
-- NodeJS
-- Git
+- Node.js [https://nodejs.org/]
+- Optional (enables video converter): FFmpeg [https://www.ffmpeg.org/]
 
 ## Setup
 - download and install dependencies:
@@ -19,9 +16,9 @@ npm install
 - start server: **start-server.bat**
 - start mediacenter **start.bat**
 - load url **localhost:3000**
-
+- Optional: download the **ffmpeg.exe** and move it to **./server/**
 
 ## todo
 - a click on the snackbar change hint should show the changed files
 - mark active episode in serieslist or/and show last episode index next to resume series button
-- allow conversion of files in case they are not playable by the html5 player
+- DONE ~~allow conversion of files in case they are not playable by the html5 player~~
