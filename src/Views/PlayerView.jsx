@@ -18,6 +18,7 @@ import AVSkipNext from 'material-ui/svg-icons/av/skip-next';
 import AVSkipPrevious from 'material-ui/svg-icons/av/skip-previous';
 import AVVolumeOff from 'material-ui/svg-icons/av/volume-off';
 import AVVolumeUp from 'material-ui/svg-icons/av/volume-up';
+import AVVolumeDown from 'material-ui/svg-icons/av/volume-down';
 import NavigationFullscreen from 'material-ui/svg-icons/navigation/fullscreen';
 import NavigationFullscreenExit from 'material-ui/svg-icons/navigation/fullscreen-exit';
 import {Grid, Row, Col} from 'react-flexbox-grid';
@@ -61,11 +62,14 @@ export default class PlayerView extends Component {
                 // internet explorer
                 e.returnValue = false;
             }
+            if(self.state.playing)
+                self.showUIForShortTime(<AVPause/>)
+            else
+                self.showUIForShortTime(<AVPlayArrow/>)
             self.playPause()
-            self.showUIForShortTime()
         });
         Mousetrap.bind('ctrl+right', function (e) {
-
+            console.log(' c r')
             if (e.preventDefault) {
                 e.preventDefault();
             } else {
@@ -73,10 +77,12 @@ export default class PlayerView extends Component {
                 e.returnValue = false;
             }
             self.playNextEpisode()
-            self.showUIForShortTime()
+            self.showUIForShortTime(<AVSkipNext/>)
         });
+
         Mousetrap.bind('ctrl+left', function (e) {
 
+            console.log(' cl')
             if (e.preventDefault) {
                 e.preventDefault();
             } else {
@@ -84,10 +90,11 @@ export default class PlayerView extends Component {
                 e.returnValue = false;
             }
             self.playPreviousEpisode()
-            self.showUIForShortTime()
+            self.showUIForShortTime(<AVSkipPrevious/>)
         });
         Mousetrap.bind('up', function (e) {
 
+            console.log('up')
             if (e.preventDefault) {
                 e.preventDefault();
             } else {
@@ -95,7 +102,7 @@ export default class PlayerView extends Component {
                 e.returnValue = false;
             }
             self.volumeUp()
-            self.showUIForShortTime()
+            self.showUIForShortTime(<AVVolumeUp/>)
         });
         Mousetrap.bind('down', function (e) {
 
@@ -106,7 +113,7 @@ export default class PlayerView extends Component {
                 e.returnValue = false;
             }
             self.volumeDown()
-            self.showUIForShortTime()
+            self.showUIForShortTime(<AVVolumeDown/>)
         });
 
         Mousetrap.bind('f11', function (e) {
@@ -117,9 +124,56 @@ export default class PlayerView extends Component {
                 // internet explorer
                 e.returnValue = false;
             }
+            if(self.state.fullScreen)
+                self.showUIForShortTime(<NavigationFullscreenExit/>)
+            else
+                self.showUIForShortTime(<NavigationFullscreen/>)
             self.onClickFullscreen()
-            self.showUIForShortTime()
         });
+        Mousetrap.bind('plus', function (e) {
+
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                // internet explorer
+                e.returnValue = false;
+            }
+            self.setPlaybackRate(self.state.playbackRate + .25)
+            self.showUIForShortTime('x' + self.state.playbackRate)
+        });
+        let intervalRewind;
+        let fakeNegativeSpeed = 0;
+        Mousetrap.bind('-', function (e) {
+
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                // internet explorer
+                e.returnValue = false;
+            }
+
+            if (self.state.playbackRate - .25 >= 0) {
+                self.setPlaybackRate(self.state.playbackRate - .25)
+                console.log(self.state.playbackRate, "playbackrate negative")
+
+                clearInterval(intervalRewind);
+            } else {
+                fakeNegativeSpeed -= .25
+                intervalRewind = setInterval(function () {
+                    self.setPlaybackRate(1)
+                    // duration * played
+                    if (self.state.played === 0) {
+                        clearInterval(intervalRewind);
+                        self.pause();
+                    }
+                    else {
+                        self.setState({played: self.state.played - 0.0001});
+                    }
+                }, 30);
+            }
+            self.showUIForShortTime('x' + self.state.playbackRate)
+        });
+
         db.get('volume', (err, volume) => {
             if (!err && volume)
                 self.setVolume(null, parseFloat(volume))
@@ -136,9 +190,20 @@ export default class PlayerView extends Component {
         }, 500)
     }
 
-    showUIForShortTime = () => {
+    showUIForShortTime = (stringToShow) => {
         let self = this
+        if (stringToShow)
+            self.setState({
+                pulseText: stringToShow,
+                pulseAnimation: true
+            })
 
+        setTimeout(() => {
+            self.setState({
+                pulseAnimation: false
+            })
+        }, 500)
+        // <i className="lard material-icons">assignment_turned_in</i>
         self.setState({
             keyRecentlyPressed: true,
             mouseMovedNotSince: 0
@@ -318,12 +383,12 @@ export default class PlayerView extends Component {
     }
 
     volumeUp = () => {
-        if (this.state.volume + .1 <= 1) {
+        if (this.state.volume + .05 <= 1) {
             this.setVolume(null, parseFloat(this.state.volume + .1))
         }
     }
     volumeDown = () => {
-        if (this.state.volume - .1 >= 0)
+        if (this.state.volume - .05 >= 0)
             this.setVolume(null, parseFloat(this.state.volume - .1))
 
     }
@@ -334,7 +399,7 @@ export default class PlayerView extends Component {
             this.setState({muted: this.player.player.player.muted})
     }
     setPlaybackRate = e => {
-        // console.log(e.target)
+        console.log(e)
         // console.log(parseFloat(e.target.value))
         this.setState({playbackRate: e})
     }
@@ -411,7 +476,7 @@ export default class PlayerView extends Component {
                         ref={player => {
                             this.player = player
                         }}
-                         // controls
+                        // controls
                         crossorigin="anonymous"
                         width='100%'
                         height='100%'
@@ -443,6 +508,7 @@ export default class PlayerView extends Component {
                         onDuration={duration => this.setState({duration})}
                     />
                 </div>
+                <div className={'pulse ' + (this.state.pulseAnimation ? 'bigger' : '')}> {this.state.pulseText} </div>
                 <div
                     onMouseMove={() => this.onMouseMove()}
                     className={'overlay top-tool-bar ' + ((this.state.keyRecentlyPressed || ScreenFull.isFullscreen) && this.state.mouseMovedNotSince < 4000 ? 'show' : 'hide')}>
