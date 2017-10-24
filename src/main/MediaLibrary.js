@@ -25,15 +25,3 @@ export default function MediaLibrary() {
         })
     }
 }
-
-/**
- *
- * come to me and tell me
- * tell me whats wrong
- * i will try to help you
- * even if its not good for me
- *
- * Carpo auf 5 thread
- * special chords: e, F, a, G
- */
-

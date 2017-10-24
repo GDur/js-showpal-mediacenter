@@ -1,5 +1,3 @@
-// console.log(ExtractSeasonAndEpisodeInformation('DDLValley.cool_awow.408.hdtv-lol.mp4'))
-// console.log(ExtractSeasonAndEpisodeInformation('Arrow - S05E15.mkv.part'))
 export default function (title) {
     // 's02e23'
     let sXXeXX = new RegExp('s(\\d+)e(\\d+)', 'gi')
