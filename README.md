@@ -19,6 +19,16 @@ npm install
 - Optional: download the **ffmpeg.exe** and move it to **./server/**
 
 ## todo
+- prioritize converted videos over unconverted
+- suggest conversion only for videos with wrong format
+- indicate last/first video playing (disable skip to next/previous video button)
+- indicate end of series reached
+- indicate active video
+- in list: indicate progress in watched videos
 - a click on the snackbar change hint should show the changed files
-- mark active episode in serieslist or/and show last episode index next to resume series button
-- DONE ~~allow conversion of files in case they are not playable by the html5 player~~
+- add button which opens the folder containing the media file
+
+## done
+- allow conversion of files in case they are not playable by the html5 player
+- show specific visual clue when hotkey was pressed
+- scrollbar should not skew layout
