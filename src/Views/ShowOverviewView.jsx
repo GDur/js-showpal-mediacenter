@@ -157,7 +157,6 @@ export default class ShowOverviewView extends React.Component {
 
 
         return (
-
             <div>
                 <img className="background" alt="background" src={require('../images/background.png')}/>
                 <div className="banner">ShowPal</div>
@@ -178,9 +177,9 @@ export default class ShowOverviewView extends React.Component {
                 <SnackBar
                     open={this.state.open}
                     message={this.state.message}
-                    action="undo"
-                    autoHideDuration={3000}
-                    onRequestClose={this.handleRequestClose}
+                    // action="undo"
+                    autoHideDuration={5000}
+                    // onRequestClose={this.handleRequestClose}
                 />
             </div>
         )

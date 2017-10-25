@@ -1,6 +1,6 @@
 {
   "name": "js-showpal-media-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "proxy": "http://localhost:3001/",
   "devDependencies": {
@@ -15,6 +15,7 @@
     "mousetrap": "^1.6.1",
     "nodemon": "^1.11.0",
     "react": "^15.6.1",
+    "react-custom-scrollbars": "^4.2.0",
     "react-dom": "^15.6.1",
     "react-flexbox-grid": "^1.1.5",
     "react-mousetrap": "^0.2.0",

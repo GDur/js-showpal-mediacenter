@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import './App.css'
 import config from './config.json'
@@ -7,9 +7,11 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {Scrollbars} from 'react-custom-scrollbars';
 
 let log = console.log.bind(console)
 log('started')
+
 /**
  * TODO:
  * - Hotkeys for everything, but mostly the player
@@ -38,7 +40,13 @@ class App extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-                <ShowOverviewView />
+                <Scrollbars
+                    style={{position: 'fixed', top: 0, bottom: 0, left: 0, right: 0}}
+                    renderThumbVertical={ props => <div {...props} className="thumb-vertical"/>}
+                    autoHide
+                    >
+                    <ShowOverviewView/>
+                </Scrollbars>
             </MuiThemeProvider>
         );
     }
