@@ -24,11 +24,11 @@ npm install
 - indicate last/first video playing (disable skip to next/previous video button)
 - indicate end of series reached
 - indicate active video
-- in list: indicate progress in watched videos
+- in list: indicate progress for watched videos
 - a click on the snackbar change hint should show the changed files
 - add button which opens the folder containing the media file
 
 ## done
-- allow conversion of files in case they are not playable by the html5 player
-- show specific visual clue when hotkey was pressed
-- scrollbar should not skew layout
+- 1.0 allow conversion of files in case they are not playable by the html5 player
+- 1.1 show specific visual clue when hotkey was pressed
+- 1.2 scrollbar should not skew layout
