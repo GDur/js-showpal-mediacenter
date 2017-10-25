@@ -27,6 +27,7 @@ npm install
 - in list: indicate progress for watched videos
 - a click on the snackbar change hint should show the changed files
 - add button which opens the folder containing the media file
+- make this an electron project: create installer
 
 ## done
 - 1.0 allow conversion of files in case they are not playable by the html5 player
