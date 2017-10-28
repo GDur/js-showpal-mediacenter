@@ -60,3 +60,7 @@ typings/
 .idea
 /src/config.json
 /showpal-db
+/package-lock.json
+/server/ffmpeg.exe
+/server/ffplay.exe
+/server/ffprobe.exe

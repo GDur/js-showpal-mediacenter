@@ -154,10 +154,11 @@ export default class PlayerView extends Component {
 
             if (self.state.playbackRate - .25 >= 0) {
                 self.setPlaybackRate(self.state.playbackRate - .25)
-                console.log(self.state.playbackRate, "playbackrate negative")
+                console.log(self.state.playbackRate, "playbackrate 0")
 
                 clearInterval(intervalRewind);
             } else {
+                console.log(self.state.playbackRate, "playbackrate negative")
                 fakeNegativeSpeed -= .25
                 intervalRewind = setInterval(function () {
                     self.setPlaybackRate(1)
@@ -167,9 +168,9 @@ export default class PlayerView extends Component {
                         self.pause();
                     }
                     else {
-                        self.setState({played: self.state.played - 0.0001});
+                        self.setState({played: self.state.played - 0.001});
                     }
-                }, 30);
+                }, 300);
             }
             self.showUIForShortTime('x' + self.state.playbackRate)
         });

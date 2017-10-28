@@ -57,6 +57,7 @@ export default class TVShowFileArrayInterface {
 
         let tvShowFileArray = data.files
         let basePath = data.basePath
+
         // console.log(data)
 
 
@@ -86,11 +87,16 @@ export default class TVShowFileArrayInterface {
         }
 
 
+        let convertedSeries = []
         // create new series if it not already exists
         let series = [];
         for (let i = 0; i < tvShowFileArray.length; i++) {
             let fullFilePath = tvShowFileArray[i]
             let filePath = path.relative(basePath, fullFilePath)
+
+            if (fullFilePath.indexOf('.converted.mkv') >= 0) {
+                convertedSeries.push(fullFilePath)
+            }
             let seriesName = filePath.split('/').shift()
 
             let seriesExists = false
@@ -104,6 +110,7 @@ export default class TVShowFileArrayInterface {
                 series.push(new Series(seriesName))
 
         }
+        console.log(convertedSeries, 'ztest')
 
         // add episodes to Series
         return tvShowFileArray.reduce((acc, fullFilePath) => {
@@ -112,7 +119,8 @@ export default class TVShowFileArrayInterface {
 
             series.filter((series) => {
                 if (series.name === seriesName) {
-                    series.addEpisode(new Episode(fullFilePath))
+                    if (convertedSeries.indexOf(fullFilePath + '.converted.mkv') < 0)
+                        series.addEpisode(new Episode(fullFilePath))
                 }
             })
 
