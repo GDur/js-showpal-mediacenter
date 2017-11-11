@@ -31,35 +31,29 @@ exports.extractVideoInformation = function (videoPath, cb) {
         const ffmpeg = spawn(FFMPEG_BIN_PATH, options)
 
         ffmpeg.stderr.on('data', function (data) {
-            let d = data.toString()
-            // console.log('================================', d)
-            let vrx = new RegExp('Video: (.+?)? ')
-            let v = d.match(vrx);
+            let dataString = data.toString()
+            // console.log('================================', dataString)
 
+            let v = dataString.match(new RegExp('Video: (.+?)? '));
             if (v && v[1])
                 eData.video = v[1]
 
-
-            let arx = new RegExp('Audio: (.+?)? ')
-            let a = d.match(arx)
+            let a = dataString.match(new RegExp('Audio: (.+?)? '))
             if (a && a[1])
                 eData.audio = a[1]
 
-            let erx = new RegExp('encoder *: (.*)', 'gi')
-            let e = d.match(erx)
+            let e = dataString.match(new RegExp('encoder *: (.*)', 'gi'))
             if (e && e[0])
                 eData.encoding = e[0].split(': ')[1]
 
-            let erxx = new RegExp('Duration: (.*?)?,')
-            let ee = d.match(erxx)
-            if (ee && ee[1]) {
-                eData.duration = TimeConverter.timeToMs(ee[1])
+            let d = dataString.match(new RegExp('Duration: (.*?)?,'))
+            if (d && d[1]) {
+                eData.duration = TimeConverter.timeToMs(d[1])
             }
         });
 
         ffmpeg.stderr.on('end', function () {
             // success
-
             cb(eData, true, null)
         });
         //
