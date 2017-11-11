@@ -14,7 +14,7 @@ export default function MediaLibrary() {
         self.scan(cb)
         setInterval(() => {
             self.scan(cb)
-        }, 25000)
+        }, 4000)
     }
 
     self.scan = function (cb) {

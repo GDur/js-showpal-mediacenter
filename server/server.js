@@ -1,27 +1,11 @@
 const fs = require('fs'),
-    http = require('http'),
-    url = require('url'),
     path = require('path'),
     level = require('level'),
-    leftPad = require('left-pad')
-const util = require('util'),
-    EventEmitter = require('events').EventEmitter,
-    child_process = require('child_process'),
-    spawn = require('child_process').spawn,
-    readline = require('readline'),
-    os = require('os');
-
-
-process.env['FFMPEG_BIN_PATH'] = path.normalize(__dirname) + '/ffmpeg.exe';
-
-const FFMPEG_BIN_PATH = process.env.FFMPEG_BIN_PATH || 'ffmpeg';
-const express = require('express'),
+    express = require('express'),
     glob = require('glob'),
     config = require('../src/config.json'),
-    ffmpegWrapper = require('../src/Utilities/ffmpeg-wrapper').ffmpegWrapper
-
-const FFMPEG = new ffmpegWrapper()
-
+    convertVideo = require('./convertVideo').convertVideo,
+    extractVideoInformation = require('./extractVideoInformation').extractVideoInformation
 
 const app = express()
 
@@ -31,30 +15,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-
-// 1) Create our database, supply location and options.
-//    This will create or open the underlying LevelDB store.
-const db = new level('./showpal-db')
-
-app.post('/leveldb/put', function (req, res) {
-    db.put(req.query.key, req.query.value, function (err) {
-        if (err)
-            res.json({err: err.message})
-        else
-            res.json({err: null})
-    })
-})
-app.post('/leveldb/get', function (req, res) {
-    db.get(req.query.key, function (err, value) {
-        if (err)
-            res.json({err: err.message})
-        else
-            res.json({err: null, value: value})
-    })
-})
-// let dirName = __dirname + '/public'
 let basePath = config.tvShowPath
-
 let cachedFiles = []
 let folderHasChanged = false
 let changedFiles = []
@@ -70,6 +31,52 @@ fs.watch(basePath, {
         changedFiles.push(filename)
     }
 });
+
+app.get('/conversionRequest', function (req, res) {
+
+    let reqResource = req.query.videoPath;
+    let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
+
+    extractVideoInformation(videoPath, (data, hasFinished, error) => {
+        if (error) {
+            console.log("ERROR:", error)
+            return
+        }
+        if (hasFinished) {
+            console.log('FINISHED:', (data))
+        }
+    })
+    convertVideo(videoPath, (progress, duration, hasFinished, error) => {
+        if (error) {
+            console.log("ERROR:", error)
+            // res.json({
+            //     error: error
+            // })
+            return
+        }
+        if (hasFinished) {
+            console.log('FINISHED')
+            // res.json({
+            //     finished: true
+            // })
+            return
+        }
+        if (progress && duration) {
+            let data = {
+                progress: progress,
+                duration: duration,
+                percent: progress / duration * 100
+            }
+            // res.json()
+            console.log('PROGRESS:',
+                data.progress + 'ms',
+                data.duration + 'ms',
+                data.percent + '%'
+            )
+        }
+    })
+})
+
 
 app.get('/getFileArrayFromTvShowFolder', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -109,91 +116,25 @@ app.get('/getFileArrayFromTvShowFolder', function (req, res) {
 })
 
 
-function msToTime(duration) {
-    let milliseconds = parseInt((duration % 1000) / 100)
-        , seconds = parseInt((duration / 1000) % 60)
-        , minutes = parseInt((duration / (1000 * 60)) % 60)
-        , hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-    return hours + ":" + minutes + ":" + seconds //+ "." + leftPad(milliseconds, 3, 0);
-}
-
-
-app.get('/conversionRequest', function (req, res) {
-
-    let reqResource = req.query.videoPath;
-    let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
-
-    try {
-
-
-        let options = [
-            '-i', videoPath,
-            '-c:a', 'libvorbis',
-            '-c:v', 'copy',
-            videoPath + '.converted.mkv']
-
-        console.log(options.join(', '))
-        const ffmpeg = spawn(FFMPEG_BIN_PATH, options);
-
-
-        ffmpeg.stderr.on('data', function (data) {
-            console.log("data", data.toString());
-            // ffmpeg.stdin.write('q')
-        });
-
-        ffmpeg.stderr.on('end', function () {
-            console.log('end', 'file has been converted succesfully');
-            // ffmpeg.stdin.write('q')
-        });
-
-        ffmpeg.stderr.on('exit', function () {
-            console.log('child process exited');
-            // ffmpeg.stdin.write('q')
-        });
-
-        ffmpeg.stderr.on('close', function () {
-            // ffmpeg.stdin.write('q')
-            console.log('...closing time! bye');
-        });
-    } catch (err) {
-        console.log(err)
-    }
-    res.json({
-        basePath: "test"
-    })
-})
 app.get('/streamRequest', function (req, res) {
     let reqResource = req.query.tvShow;
-    // let seekPositionPercentage = req.query.seek || 0;
-    console.log(reqResource)
-
     let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
     let stat = fs.statSync(videoPath);
     let total = stat.size;
-
     let range = req.headers.range
-
     let parts = range.replace(/bytes=/, "").split("-")
     let partialStart = parts[0]
     let partialEnd = parts[1]
-
     let start = parseInt(partialStart, 10)
     let end = partialEnd ? parseInt(partialEnd, 10) : total - 1
-
     let file = fs.createReadStream(videoPath, {start: start, end: end});
-
     res.writeHead(206, {
         'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
         'Accept-Ranges': 'bytes',
         'Content-Type': 'video/mp4'
     });
     file.pipe(res);
-
 })
 
 
@@ -210,3 +151,26 @@ function sendCachedFiles(res) {
 app.listen(3001, function () {
     console.log('Example app listening on port 3001!')
 })
+
+
+// 1) Create our database, supply location and options.
+//    This will create or open the underlying LevelDB store.
+const db = new level('./showpal-db')
+
+app.post('/leveldb/put', function (req, res) {
+    db.put(req.query.key, req.query.value, function (err) {
+        if (err)
+            res.json({err: err.message})
+        else
+            res.json({err: null})
+    })
+})
+app.post('/leveldb/get', function (req, res) {
+    db.get(req.query.key, function (err, value) {
+        if (err)
+            res.json({err: err.message})
+        else
+            res.json({err: null, value: value})
+    })
+})
+

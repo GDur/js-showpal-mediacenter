@@ -35,6 +35,29 @@ class App extends Component {
 
     componentDidMount() {
         // this.fetchTVShows()
+
+        // function checkStatus(response) {
+        //     if (response.status >= 200 && response.status < 300) {
+        //         console.log(response)
+        //         return response;
+        //     }
+        //     let error = new Error(`HTTP Error ${response.statusText}`);
+        //     error.status = response.statusText;
+        //     error.response = response;
+        //     // console.log(error); // eslint-disable-line no-console
+        //     throw error;
+        // }
+        //
+        //
+        // function parseJSON(response) {
+        //     return response.json();
+        // }
+        // //
+        // fetch('http://api.tvmaze.com/singlesearch/shows?q=rick%20and%20morty&embed=episodes', {
+        //     accept: 'application/json'
+        // }).then(checkStatus).then(parseJSON).then(function(data){
+        //     console.log('wad', JSON.stringify(data))
+        // });
     }
 
     render() {
