@@ -227,7 +227,7 @@ time.played-time {
 }
 
 .details {
-
+    display: none;
     max-height: 0;
     overflow-y: auto;
     transform: scaleY(0);
@@ -237,6 +237,7 @@ time.played-time {
 }
 
 .show-details {
+    display: block;
     max-height: 100%;
     overflow-y: auto;
     transform: scaleY(1);

@@ -587,13 +587,13 @@ export default class ShowPaper extends React.Component {
 
         let episode = series.episodes.map((episode) => {
 
-             fetch('/extractVideoInformationRequest?videoPath=' + episode.fullFilePath, {
-                accept: 'application/json'
-            }).then(checkStatus)
-                .then(parseJSON)
-                .then((data) => {
-                    console.log(episode.fullFilePath, JSON.stringify(data))
-                });
+            //  fetch('/extractVideoInformationRequest?videoPath=' + episode.fullFilePath, {
+            //     accept: 'application/json'
+            // }).then(checkStatus)
+            //     .then(parseJSON)
+            //     .then((data) => {
+            //         console.log(episode.fullFilePath, JSON.stringify(data))
+            //     });
             return (<div key={episode.fullFilePath}>
                 <FlatButton tabIndex={(this.state.showDetails ? 1 : -1)} onClick={() => {
                     self.state.player.resumeEpisode(series, episode)

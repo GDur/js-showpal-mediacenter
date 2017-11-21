@@ -1,18 +1,19 @@
+// 's02e23'
+let sXXeXX = new RegExp('s(\\d+)e(\\d+)', 'gi')
+
+// 'season 2 episode 4'
+let seasonXXepisodeXX = new RegExp('season[ \\.]?(\\d+)[ \\.]?episode[ \\.]?(\\d+)', 'gi')
+
+// '2017.03.04'  ||  '2017 03 04'
+let datePattern = new RegExp('(\\d+)[\\. ](\\d+)[\\. ](\\d+)', 'gi')
+
+// 'part.23'
+let partPattern = new RegExp('(part[\\. ]\\d+)', 'gi')
+
+// '.412.' || ' 412 ' || ' 4x12 '
+let xxxPatter = new RegExp('[\\. ]?(\\d)x?(\\d\\d)[\\. ]?', 'gi')
+
 export default function (title) {
-    // 's02e23'
-    let sXXeXX = new RegExp('s(\\d+)e(\\d+)', 'gi')
-
-    // 'season 2 episode 4'
-    let seasonXXepisodeXX = new RegExp('season[ \\.]?(\\d+)[ \\.]?episode[ \\.]?(\\d+)', 'gi')
-
-    // '2017.03.04'  ||  '2017 03 04'
-    let datePattern = new RegExp('(\\d+)[\\. ](\\d+)[\\. ](\\d+)', 'gi')
-
-    // 'part.23'
-    let partPattern = new RegExp('(part[\\. ]\\d+)', 'gi')
-
-    // '.412.' || ' 412 '
-    let xxxPatter = new RegExp('[\\. ](\\d)(\\d\\d)[\\. ]', 'gi')
 
     if (title.match(sXXeXX)) {
         let match = sXXeXX.exec(title)
