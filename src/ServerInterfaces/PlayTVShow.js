@@ -3,12 +3,20 @@
  */
 
 export default function (query, cb) {
-    let p = `streamRequest`
     if (query.tvShow) {
-        p += `&tvShow=` + query.tvShow
+        let url = `streamRequest&tvShow=` + query.tvShow
+        console.log(url, query);
+        if (cb)
+            return fetch(url, {accept: 'application/json'})
+                .then(checkStatus)
+                .then(parseJSON)
+                .then(cb);
+        else {
+            console.info('Please specify the callback-function')
+        }
+    } else {
+        console.info('Please specify the "?tvShow" parameter')
     }
-    console.log(p, query);
-    return fetch(p, {accept: 'application/json'}).then(checkStatus).then(parseJSON).then(cb);
 }
 
 function checkStatus(response) {

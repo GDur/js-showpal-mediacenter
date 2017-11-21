@@ -3,10 +3,10 @@ const spawn = require('child_process').spawn,
     TimeConverter = require('./TimeConverter').TimeConverter
 
 
-const FFMPEG_BIN_PATH =  path.normalize(__dirname) + '/ffmpeg.exe';
+const FFMPEG_BIN_PATH = path.normalize(__dirname) + '/ffmpeg.exe';
 
 
-function convertVideo (videoPath, cb) {
+function convertVideo(videoPath, cb) {
     let duration;
     let progress;
     try {
@@ -39,25 +39,24 @@ function convertVideo (videoPath, cb) {
 
         ffmpeg.stderr.on('end', function () {
             // success
-            cb(progress ,duration, true, null)
+            cb(progress, duration, true, null)
         });
 
         ffmpeg.stderr.on('exit', function () {
             // console.log('child process exited');
-            cb(progress ,duration, false, 'There might have been an error')
+            cb(progress, duration, false, 'There might have been an error')
         });
 
         ffmpeg.stderr.on('close', function () {
-            cb(progress ,duration, true, null)
+            cb(progress, duration, true, null)
             // console.log('...closing time! bye');
         });
     } catch (err) {
         // console.log(err)
-        cb(null, null , false, 'There was an error :/' + err)
+        cb(null, null, false, 'There was an error :/' + err)
     }
 
 }
-
 
 
 exports.convertVideo = convertVideo

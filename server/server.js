@@ -7,6 +7,7 @@ const fs = require('fs'),
     convertVideo = require('./convertVideo').convertVideo,
     extractVideoInformation = require('./extractVideoInformation').extractVideoInformation
 
+
 const app = express()
 
 app.use(function (req, res, next) {
@@ -32,20 +33,34 @@ fs.watch(basePath, {
     }
 });
 
+app.get('/showInExplorerRequest', function (req, res) {
+    let reqResource = req.query.videoPath;
+    console.log(reqResource)
+    let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '\\')
+    console.log(videoPath)
+    require('child_process').exec('explorer.exe /select,"' + videoPath + '"');
+})
+
+app.get('/extractVideoInformationRequest', function (req, res) {
+    let reqResource = req.query.videoPath;
+    let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
+
+    extractVideoInformation(videoPath)
+        .then((data) => {
+            console.log('FINISHED:', videoPath, (data))
+
+            res.json(data)
+        }, (err) => {
+            console.log('ERROR:', (err))
+            res.json(err)
+        })
+
+})
 app.get('/conversionRequest', function (req, res) {
 
     let reqResource = req.query.videoPath;
     let videoPath = reqResource.replace(/%20/gi, ' ').replace(/\//gi, '/')
 
-    extractVideoInformation(videoPath, (data, hasFinished, error) => {
-        if (error) {
-            console.log("ERROR:", error)
-            return
-        }
-        if (hasFinished) {
-            console.log('FINISHED:', (data))
-        }
-    })
     convertVideo(videoPath, (progress, duration, hasFinished, error) => {
         if (error) {
             console.log("ERROR:", error)
@@ -114,7 +129,6 @@ app.get('/getFileArrayFromTvShowFolder', function (req, res) {
     }
     folderHasChanged = false
 })
-
 
 
 app.get('/streamRequest', function (req, res) {
