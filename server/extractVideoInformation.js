@@ -1,56 +1,72 @@
 const spawn = require('child_process').spawn,
-    path = require('path'),
-    TimeConverter = require('./TimeConverter').TimeConverter
+  path = require('path'),
+  TimeConverter = require('./TimeConverter').TimeConverter
 
-const FFMPEG_BIN_PATH =  path.normalize(__dirname) + '/ffmpeg.exe';
+const FFMPEG_BIN_PATH = path.normalize(__dirname) + '/ffmpeg.exe';
 
-exports.extractVideoInformation = function (videoPath) {
-    return new Promise((resolve, reject) => {
-        let eData = {};
-        try {
-            let options = [
-                '-i', videoPath
-            ]
+const supportedEncodings = [
+  '',
+  'google',
+  'Lavf58.2.100',
+]
+function isPlayable(videoData) {
+  if (videoData.hasOwnProperty('encoding')) {
+    if (supportedEncodings.indexOf(videoData.encoding) >= 0) {
+      console.log('endoding correct', videoData.encoding);
+    }
+    return true
+  }
+  return false
+}
 
-            const ffmpeg = spawn(FFMPEG_BIN_PATH, options)
+exports.extractVideoInformation = function(videoPath) {
+  return new Promise((resolve, reject) => {
+    let eData = {};
+    try {
+      let options = [
+        '-i', videoPath
+      ]
 
-            ffmpeg.stderr.on('data', function (data) {
-                let dataString = data.toString()
-                // console.log('================================', dataString)
+      const ffmpeg = spawn(FFMPEG_BIN_PATH, options)
 
-                let v = dataString.match(new RegExp('Video: (.+?)? '));
-                if (v && v[1])
-                    eData.video = v[1]
+      ffmpeg.stderr.on('data', function(data) {
+        let dataString = data.toString()
+        // console.log('================================', dataString)
 
-                let a = dataString.match(new RegExp('Audio: (.+?)? '))
-                if (a && a[1])
-                    eData.audio = a[1]
+        let v = dataString.match(new RegExp('Video: (.+?)? '));
+        if (v && v[1])
+          eData.video = v[1]
 
-                let e = dataString.match(new RegExp('encoder *: (.*)', 'gi'))
-                if (e && e[0])
-                    eData.encoding = e[0].split(': ')[1]
+        let a = dataString.match(new RegExp('Audio: (.+?)? '))
+        if (a && a[1])
+          eData.audio = a[1]
 
-                let d = dataString.match(new RegExp('Duration: (.*?)?,'))
-                if (d && d[1]) {
-                    eData.duration = TimeConverter.timeToMs(d[1])
-                }
-            });
+        let e = dataString.match(new RegExp('encoder *: (.*)', 'gi'))
+        if (e && e[0])
+          eData.encoding = e[0].split(': ')[1]
 
-            ffmpeg.stderr.on('end', function () {
-                // success
-                // cb(eData, true, null)
-                resolve(eData);
-            });
-
-            ffmpeg.stderr.on('exit', function () {
-                // console.log('child process exited');
-                // cb(eData, false, 'There might have been an error')
-                reject('There might have been an error');
-            });
-        } catch (err) {
-            // console.log(err)
-            reject(err);
-            // cb(eData, false, 'There was an error :/' + err)
+        let d = dataString.match(new RegExp('Duration: (.*?)?,'))
+        if (d && d[1]) {
+          eData.duration = TimeConverter.timeToMs(d[1])
         }
-    })
+      });
+
+      ffmpeg.stderr.on('end', function() {
+        // success
+        // cb(eData, true, null)
+        eData.playable = isPlayable(eData)
+        resolve(eData);
+      });
+
+      ffmpeg.stderr.on('exit', function() {
+        // console.log('child process exited');
+        // cb(eData, false, 'There might have been an error')
+        reject('There might have been an error');
+      });
+    } catch (err) {
+      // console.log(err)
+      reject(err);
+      // cb(eData, false, 'There was an error :/' + err)
+    }
+  })
 }
