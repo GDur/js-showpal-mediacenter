@@ -13,11 +13,12 @@ function convertVideo(videoPath, cb) {
         let options = [
             '-i', videoPath,
             '-c:a', 'libvorbis',
-            '-c:v', 'copy',
+            '-vcodec', 'libx264',
+            '-preset', 'ultrafast',
             '-y',
             videoPath + '.converted.mkv']
 
-        console.log(options.join(', '))
+        console.log(options.join(' '))
         const ffmpeg = spawn(FFMPEG_BIN_PATH, options);
 
 
